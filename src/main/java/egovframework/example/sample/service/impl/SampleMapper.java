@@ -17,6 +17,7 @@ package egovframework.example.sample.service.impl;
 
 import java.util.List;
 
+import egovframework.example.sample.service.Admin;
 import egovframework.example.sample.service.SampleDefaultVO;
 import egovframework.example.sample.service.SampleVO;
 
@@ -87,5 +88,7 @@ public interface SampleMapper {
 	 * @exception
 	 */
 	int selectSampleListTotCnt(SampleDefaultVO searchVO);
+
+	Admin adminLogin(Admin admin);
 
 }

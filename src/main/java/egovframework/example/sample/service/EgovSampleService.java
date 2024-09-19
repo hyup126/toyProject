@@ -83,4 +83,6 @@ public interface EgovSampleService {
 	 */
 	int selectSampleListTotCnt(SampleDefaultVO searchVO);
 
+	Admin adminLogin(Admin admin);
+
 }

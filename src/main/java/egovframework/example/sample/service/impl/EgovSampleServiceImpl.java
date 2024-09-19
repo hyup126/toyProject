@@ -17,6 +17,7 @@ package egovframework.example.sample.service.impl;
 
 import java.util.List;
 
+import egovframework.example.sample.service.Admin;
 import egovframework.example.sample.service.EgovSampleService;
 import egovframework.example.sample.service.SampleDefaultVO;
 import egovframework.example.sample.service.SampleVO;
@@ -54,11 +55,11 @@ public class EgovSampleServiceImpl extends EgovAbstractServiceImpl implements Eg
 
 	/** SampleDAO */
 	// TODO ibatis 사용
-	@Resource(name = "sampleDAO")
-	private SampleDAO sampleDAO;
+	//@Resource(name = "sampleDAO")
+	//private SampleDAO sampleDAO;
 	// TODO mybatis 사용
-	//  @Resource(name="sampleMapper")
-	//	private SampleMapper sampleDAO;
+	@Resource(name="sampleMapper")
+	private SampleMapper sampleDAO;
 
 	/** ID Generation */
 	@Resource(name = "egovIdGnrService")
@@ -139,6 +140,11 @@ public class EgovSampleServiceImpl extends EgovAbstractServiceImpl implements Eg
 	@Override
 	public int selectSampleListTotCnt(SampleDefaultVO searchVO) {
 		return sampleDAO.selectSampleListTotCnt(searchVO);
+	}
+
+	@Override
+	public Admin adminLogin(Admin admin) {
+		return sampleDAO.adminLogin(admin);
 	}
 
 }

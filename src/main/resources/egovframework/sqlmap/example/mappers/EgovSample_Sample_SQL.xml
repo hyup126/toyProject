@@ -9,6 +9,11 @@
 		<result property="useYn" column="use_yn"/>
 		<result property="regUser" column="reg_user"/>
 	</resultMap>
+	
+	<resultMap type="egovframework.example.sample.service.Admin" id="admin">
+		<result property="username" column="username"/>
+		<result property="password" column="password"/>
+	</resultMap>
 
 	<insert id="insertSample" parameterType="SampleVO">
 
@@ -55,23 +60,27 @@
 
 	<select id="selectSampleList" parameterType="searchVO" resultType="egovMap">
 
-			SELECT
-				ID, NAME, DESCRIPTION, USE_YN, REG_USER
-			FROM SAMPLE
-			WHERE 1=1
-			<if test="searchKeyword != null and searchKeyword != ''">
-		        <choose>
-		            <when test="searchCondition == 0">
-						AND	ID LIKE '%' || #{searchKeyword} || '%'
-					</when>
-		            <when test="searchCondition == 1">
-						AND	NAME LIKE '%' || #{searchKeyword} || '%'
-					</when>
-				</choose>
-			</if>
-			ORDER BY ID ASC
-			OFFSET #firstIndex# ROWS
-			FETCH NEXT #recordCountPerPage# ROWS ONLY
+			SELECT *
+    FROM (
+        SELECT
+            ID, NAME, DESCRIPTION, USE_YN, REG_USER,
+            ROW_NUMBER() OVER (ORDER BY ID ASC) AS RN
+        FROM SAMPLE
+        WHERE 1=1
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchCondition == 0">
+                    AND ID LIKE '%' || #{searchKeyword} || '%'
+                </when>
+                <when test="searchCondition == 1">
+                    AND NAME LIKE '%' || #{searchKeyword} || '%'
+                </when>
+            </choose>
+        </if>
+    )
+    <![CDATA[
+    WHERE RN > #{firstIndex} AND RN <= (#{firstIndex} + #{recordCountPerPage})
+    ]]>
 	</select>
 
 	<select id="selectSampleListTotCnt" parameterType="searchVO" resultType="int">
@@ -89,6 +98,19 @@
 					</when>
 				</choose>
 			</if>
+	</select>
+	
+	<select id="adminLogin" resultMap="admin">
+		select
+			username,
+			password
+		from admin
+		where
+			username = #{username}
+		and
+			password = #{password}
+		and
+			role = #{role}
 	</select>
 
 </mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.login.service.impl.MemberMapper">
+
+
+
+	<select id="detail" parameterType="memberVO" resultType="memberVO">
+		select
+			memId, memName, memPass, memEmail, memTel, memAddr, memAddr2, memDelYn, memRole, memBirth
+		from member
+		where memId = #{memId}
+	</select>
+	
+	<insert id="insertMember" parameterType="memberVO">
+		insert into member (
+			memId,
+			memName,
+			memPass,
+			memEmail,
+			memTel,
+			memAddr,
+			memAddr2,
+			memDelYn,
+			memRole,
+			memBirth			
+		) values (
+			#{memId},
+			#{memName},
+			#{memPass},
+			#{memEmail},
+			#{memTel},
+			#{memAddr},
+			#{memAddr2},
+			'N',
+			'ROLE_USER',
+			TO_DATE(#{memBirth}, 'YYYY-MM-DD')
+		)
+	</insert>
+	
+	<select id="idCheck" parameterType="string" resultType="memberVo">
+		select *
+			from member
+		where memId = #{memId}
+	</select>
+	
+	<select id="selectMemberBoardList" parameterType="searchVo" resultType="memberVo">
+		select *
+		from (
+			select
+				memId,
+				memName,
+				memPass,
+				memEmail,
+				memTel,
+				memAddr,
+				memAddr2,
+				memBirth,
+				row_number() over (order by memId asc) as rn
+			from member
+			where 1=1
+			<if test="searchCondition != null and searchKeyword != ''">
+				<choose>
+					<when test="searchCondition == 0">
+						and memId like '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchCondition == 1">
+						and memName like '%' || #{searchKeyword} || '%'
+					</when>
+				</choose>
+			</if>
+			)
+			<![CDATA[
+		    WHERE RN > #{firstIndex} AND RN <= (#{firstIndex} + #{recordCountPerPage})
+		    ]]>
+	</select>
+	
+	<select id="selectMemberListTotCnt" parameterType="searchVO" resultType="int">
+		select count(*) totCnt
+			from member
+			where 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						and memId like '%' || #{searchKeyword} || '%'
+					</when>
+		            <when test="searchCondition == 1">
+						and	memName like '%' || #{searchKeyword} || '%'
+					</when>
+				</choose>
+			</if>
+	</select>
+
+</mapper>

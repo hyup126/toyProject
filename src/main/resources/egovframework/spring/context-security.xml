@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security" xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+ 	<bean id="customAccessDenied" class="egovframework.example.login.service.impl.CustomAccessDeniedHandler"/>
+	<bean id="customLoginSuccess" class="egovframework.example.login.service.impl.CustomLoginSuccessHandler"/>
+	<bean id="customUserDetailsService" class="egovframework.example.login.service.impl.CustomUserDetailsService"/>
+	<!-- <bean id="customNoopPasswordEncoder" class="egovframework.example.login.service.impl.CustomNoopPasswordEncoder"/> -->
+	
+	<security:http  use-expressions="true" >
+  		<security:intercept-url pattern="/login.do" access="permitAll"/>
+  	
+  		<!-- <security:intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')"/> -->
+  		<security:intercept-url pattern="/join.do" access="permitAll"/>
+  		<security:intercept-url pattern="/idCheck.do" access="permitAll"/>
+  		<security:intercept-url pattern="/board/memBoardWrite.do" access="permitAll"/>
+  		<security:intercept-url pattern="/board/memBoardList.do" access="permitAll"/>
+  		<security:intercept-url pattern="/board/memBoardDetail.do" access="permitAll"/>
+  		<security:intercept-url pattern="/board/memBoardModify.do" access="permitAll"/>
+  		<security:intercept-url pattern="/board/memBoardUpdate.do" access="permitAll"/>
+  		<!-- <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')"/> -->
+  		<!-- 권한 내일 나눠놓기 -->
+	
+  	 <security:form-login
+		    login-page="/login.do"
+		    login-processing-url="/loginSave.do"
+		    default-target-url="/board/memBoardList.do"
+		    authentication-success-handler-ref="customLoginSuccess"
+		    authentication-failure-url="/login-error" />
+  	
+  		
+<!--  로그아웃 처리 URI 지정, 로그아웃 한 후 세션 무효화 및 쿠키 삭제  -->
+	<security:logout logout-url="/logout" invalidate-session="true"/>
+  		
+	</security:http>
+	
+ 	<!-- <security:authentication-manager>
+	  <security:authentication-provider>
+	  	<security:jdbc-user-service data-source-ref="egov.dataSource"/>
+	    <security:user-service>
+	      <security:user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+	      <security:user name="user" password="user" authorities="ROLE_USER"/>
+	    </security:user-service>
+	  </security:authentication-provider>
+	</security:authentication-manager> -->
+	
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="customUserDetailsService"/>
+	</security:authentication-manager>
+</beans>

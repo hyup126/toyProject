@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.board.service.impl.MemBoardMapper">
+
+	<resultMap id="memBoard" type="egovframework.example.board.service.MemBoardVO">
+		<result property="memBoardNo" column="memBoardNo"/>
+		<result property="memBoardTitle" column="memBoardTitle"/>
+		<result property="memBoardContent" column="memBoardContent"/>
+		<result property="regDate" column="regDate"/>
+		<result property="delYn" column="delYn"/>
+		<result property="memBoardHit" column="memBoardHit"/>
+	</resultMap>
+	
+	<!-- <resultMap type="egovframework.example.sample.service.Admin" id="admin">
+		<result property="username" column="username"/>
+		<result property="password" column="password"/>
+	</resultMap> -->
+
+
+	<insert id="insertBoard" parameterType="memBoardVO">
+		<selectKey keyProperty="memBoardNo" resultType="int" order="BEFORE">
+			select
+				memboard_seq.nextval
+			from dual
+		</selectKey>
+			insert into memboard (
+				memBoardNo
+			  , memBoardTitle
+			  , memBoardWriter
+			  , memBoardContent
+			  , delYn
+			  , memBoardHit
+			  ) values (
+			  #{memBoardNo}
+			  , #{memBoardTitle}
+			  , #{memBoardWriter}
+			  , #{memBoardContent}
+			  , 'N'
+			  , #{memBoardHit}
+			  )
+
+	</insert>
+
+	<update id="memBoardUpdate">
+
+			UPDATE memboard
+			SET memBoardTitle=#{memBoardTitle}
+				, memBoardContent=#{memBoardContent}
+				, updateDate=sysdate
+			where memBoardNo = #{memBoardNo}
+	</update>
+
+	<!-- <delete id="deleteSample">
+
+			DELETE FROM SAMPLE
+			WHERE ID=#{id}
+
+	</delete> -->
+
+	<select id="selectMemBoardDetail" resultMap="memBoard">
+
+			SELECT
+				memBoardNo, memBoardTitle, memBoardWriter, memBoardContent, regDate, updateDate, memBoardHit
+			FROM memboard
+			WHERE memBoardNo=#{memBoardNo}
+
+	</select>
+	
+	<update id="incrementHit" parameterType="int">
+		update memboard
+		set
+			memBoardHit = memBoardHit + 1
+		where memBoardNo = #{memBoardNo}
+	</update>
+
+	<select id="selectMemBoardList" parameterType="searchVO" resultType="memBoardVO">
+
+			SELECT *
+    FROM (
+        SELECT
+            memBoardNo, memBoardTitle, memBoardWriter, regDate, memBoardHit,
+            ROW_NUMBER() OVER (ORDER BY memBoardNo ASC) AS RN
+        FROM memboard
+        WHERE 1=1
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchCondition == 0">
+                    AND memBoardTitle LIKE '%' || #{searchKeyword} || '%'
+                </when>
+                <when test="searchCondition == 1">
+                    AND memBoardWriter LIKE '%' || #{searchKeyword} || '%'
+                </when>
+            </choose>
+        </if>
+    )
+    <![CDATA[
+    WHERE RN > #{firstIndex} AND RN <= (#{firstIndex} + #{recordCountPerPage})
+    ]]>
+	</select>
+
+	<select id="selectMemBoardListTotCnt" parameterType="searchVO" resultType="int">
+
+			SELECT COUNT(*) totCnt
+			FROM memboard
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						AND memBoardTitle LIKE '%' || #{searchKeyword} || '%'
+					</when>
+		            <when test="searchCondition == 1">
+						AND	memBoardContent LIKE '%' || #{searchKeyword} || '%'
+					</when>
+				</choose>
+			</if>
+	</select>
+	
+	<!-- <select id="adminLogin" resultMap="admin">
+		select
+			username,
+			password
+		from admin
+		where
+			username = #{username}
+		and
+			password = #{password}
+		and
+			role = #{role}
+	</select> -->
+
+</mapper>
