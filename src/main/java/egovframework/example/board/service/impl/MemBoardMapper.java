@@ -28,6 +28,4 @@ public interface MemBoardMapper {
 
 	public List<ReplyVO> selectReplyList(int memBoardNo);
 
-	
-	
 }

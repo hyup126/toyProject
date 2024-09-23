@@ -10,15 +10,6 @@
 		<result property="delYn" column="delYn"/>
 		<result property="memBoardHit" column="memBoardHit"/>
 	</resultMap>
-	
-	<resultMap type="replyVO" id="replyMap">
-		<id property="replyNo" column="replyNo"/>
-		<result property="memBoardNo" column="memBoardNo"/>
-		<result property="replyWriter" column="replyWriter"/>
-		<result property="replyContent" column="replyContent"/>
-		<result property="replyRegDate" column="replyRegDate"/>
-	</resultMap>
-	
 	<!-- <resultMap type="egovframework.example.sample.service.Admin" id="admin">
 		<result property="username" column="username"/>
 		<result property="password" column="password"/>
@@ -26,9 +17,9 @@
 
 	<!-- 댓글 SQL -->
 	<select id="selectReplyList" resultType="replyVO" parameterType="int">
-		select *
+		select replyNo, memBoardNo, replyWriter, replyContent, replyRegDate
 		from reply
-		where replyNo = #{replyNo}
+		where memBoardNo = #{memBoardNo} and delYn = 'N'
 		order by replyNo desc
 	</select>
 

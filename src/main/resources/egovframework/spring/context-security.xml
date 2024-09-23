@@ -11,11 +11,11 @@
   		<!-- <security:intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')"/> -->
   		<security:intercept-url pattern="/join.do" access="permitAll"/>
   		<security:intercept-url pattern="/idCheck.do" access="permitAll"/>
-  		<security:intercept-url pattern="/board/memBoardWrite.do" access="permitAll"/>
-  		<security:intercept-url pattern="/board/memBoardList.do" access="permitAll"/>
-  		<security:intercept-url pattern="/board/memBoardDetail.do" access="permitAll"/>
-  		<security:intercept-url pattern="/board/memBoardModify.do" access="permitAll"/>
-  		<security:intercept-url pattern="/board/memBoardUpdate.do" access="permitAll"/>
+  		<security:intercept-url pattern="/board/memBoardWrite.do" access="hasRole('ROLE_USER')"/>
+  		<security:intercept-url pattern="/board/memBoardList.do" access="hasRole('ROLE_USER')"/>
+  		<security:intercept-url pattern="/board/memBoardDetail.do" access="hasRole('ROLE_USER')"/>
+  		<security:intercept-url pattern="/board/memBoardModify.do" access="hasRole('ROLE_USER')"/>
+  		<security:intercept-url pattern="/board/memBoardUpdate.do" access="hasRole('ROLE_USER')"/>
   		<!-- <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')"/> -->
   		<!-- 권한 내일 나눠놓기 -->
 	

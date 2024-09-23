@@ -175,7 +175,7 @@ body {
                 </tr>
                 <tr>
                     <td class="listCenter">작성자:</td>
-                    <td><input type="text" id="memBoardWriter" name="memBoardWriter" value="a001" readonly="readonly"></td>
+                    <td><input type="text" id="memBoardWriter" name="memBoardWriter" value="${memVO.memId }" readonly="readonly"></td>
                 </tr>
                 <tr>
                     <td class="listCenter">내용:</td>

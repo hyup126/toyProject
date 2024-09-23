@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -72,7 +73,15 @@ public class MemBoardController {
 	}
 	
 	@RequestMapping(value = "/memBoardList.do")
-	public String memBoardList(@ModelAttribute("searchVo") SampleDefaultVO searchVo, Model model) {
+	public String memBoardList(@ModelAttribute("searchVo") SampleDefaultVO searchVo, Model model, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String memId = (String)session.getAttribute("memId");
+		
+		if(memId == null || memId == "") {
+			return "/login.do";
+		}
+		
 		
 		searchVo.setPageUnit(propertiesService.getInt("pageUnit"));
 		searchVo.setPageSize(propertiesService.getInt("pageSize"));
@@ -101,13 +110,14 @@ public class MemBoardController {
 	}
 	
 	@RequestMapping(value = "/memBoardDetail.do")
-	public String memBoardDetail(@RequestParam(name="memBoardNo", required = false) int memBoardNo, Model model) {
+	public String memBoardDetail(int memBoardNo, Model model) {
 		
 		MemBoardVO memBoardVo = memBoardService.selectMemBoardDetail(memBoardNo);
 		List<ReplyVO> replyList = memBoardService.selectReplyList(memBoardNo);
+		log.info("replyList : " + replyList);
 		
-		model.addAttribute("replyList", replyList);
 		model.addAttribute("memBoard", memBoardVo);
+		model.addAttribute("replyList", replyList);
 		
 		return "memBoard/memBoardDetail";
 	}

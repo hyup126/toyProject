@@ -13,6 +13,21 @@ public class ReplyServiceImpl implements ReplyService {
 
 	@Autowired
 	private ReplyMapper replyMapper;
+
+	@Override
+	public int insertReply(ReplyVO replyVo) {
+		return replyMapper.insertReply(replyVo);
+	}
+
+	@Override
+	public int updateReply(ReplyVO replyVo) {
+		return replyMapper.updateReply(replyVo);
+	}
+
+	@Override
+	public int deleteReply(int replyNo) {
+		return replyMapper.deleteReply(replyNo);
+	}
 	
 
 	
