@@ -52,7 +52,7 @@ public class ReplyController {
 		
 		HttpSession session = request.getSession();
 		String memId = (String)session.getAttribute("memId");
-		
+		log.info("쓰레기같은놈들");
 		replyVo.setReplyWriter(memId);
 		
 		int res = replyService.insertReply(replyVo);
