@@ -64,6 +64,7 @@
 			set
 				memBoardTitle = #{memBoardTitle}
 				, memBoardContent = #{memBoardContent}
+				, updateDate = TO_CHAR(sysdate, 'YYYY-MM-DD')
 		where memBoardNo = #{memBoardNo}
 	</update>
 

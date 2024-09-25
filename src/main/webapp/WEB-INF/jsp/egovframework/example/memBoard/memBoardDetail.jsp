@@ -2,6 +2,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,6 +31,7 @@
             border-bottom: #BABABA 1px solid;
             border-collapse: collapse;
             width: 100%;
+            table-layout: fixed;
         }
         .listTable th {
             border-bottom: #A3A3A3 1px solid;
@@ -41,7 +44,7 @@
             border-bottom: #E0E0E0 1px solid;
             padding: 2px;
             background-color: #F7F7F7;
-            height: 20px;
+            height: auto;
         }
         .card {
             margin-bottom: 20px; /* 카드 사이 간격 */
@@ -59,6 +62,9 @@
             height: 80px;
             white-space: pre;
             margin-bottom: 10px; /* 입력창과 버튼 간격 */
+        }
+        #replyContent {
+        	word-break: break-word;
         }
     </style>
 </head>
@@ -80,16 +86,16 @@
                 <td>${memBoard.memBoardWriter}</td>
             </tr>
             <tr>
-                <td class="listCenter">내용:</td>
-                <td><pre>${memBoard.memBoardContent}</pre></td>
-            </tr>
-            <tr>
+            	<fmt:formatDate value="${memBoard.regDate}" var="regDate" pattern="yyyy-MM-dd"/>
                 <td class="listCenter">등록일:</td>
-                <td>${memBoard.regDate}</td>
+                <td>${regDate}</td>
             </tr>
             <tr>
                 <td class="listCenter">조회수:</td>
                 <td>${memBoard.memBoardHit}</td>
+            </tr>
+            <tr>
+                <td style="height:auto; width: 100%; word-break: break-word;"><pre>${memBoard.memBoardContent}</pre></td>
             </tr>
         </table>
 
@@ -107,9 +113,9 @@
                     <div class="card" data-reply-no="${reply.replyNo }" data-memboard-no="${reply.memBoardNo }">
                         <div class="card-header pt-2">
                             <div class="d-flex justify-content-between align-items-center">
-                                <span id="repWriter">${reply.replyWriter }</span>
+                                <span id="repWriter" >${reply.replyWriter }</span>
                                 <small class="text-body-secondary"> 
-                                    <button class="btn btn-sm btn-primary replyUpdateBtn" id="replyUdt">수정</button>
+                                    <button class="btn btn-sm btn-primary replyUdt" id="replyUdt">수정</button>
                                     <button type="button" class="btn btn-sm btn-danger" id="delRplBtn">삭제</button>
                                 </small>
                                 
@@ -169,7 +175,7 @@ $(function(){
 	
 	var replyUdt = $("#replyUdt");
 	
-	delRplBtn.click(function(){
+	rpBody.on("click", "#delRplBtn" ,function(){
 		var token = $("meta[name='_csrf']").attr("content");
 		var header = $("meta[name='_csrf_header']").attr("content");
 		
@@ -196,7 +202,7 @@ $(function(){
             	console.log(response);
             	if(response.status == "success") {
             		alert(response.message);
-            		location.href = reponse.redirectUrl;
+            		response.redirectUrl;
             	}
             }
         })
@@ -212,21 +218,25 @@ $(function(){
 		var replyContent = $("#replyContent").val();
 		
 		var rpCard = $(this).closest(".card");
-		var rpNo = rpCard.data("reply-no");
-        var memBoardNo = rpCard.data("memboard-no");
+		var rpNo = $(this).parents(".card").data("reply-no");
+        var memBoardNo = $(this).parents(".card").data("memboard-no");
+        
+        
         
         console.log("rpCard: ", rpCard);
         console.log("rpNo: " + rpNo);
         console.log("memBoardNo: " + memBoardNo);
+        console.log("replyNo: " + $(this).parents(".card").data("reply-no"));
         
 		var body = $(this).parents(".card").find("#replyContent");
 		console.log("body", body);
 		console.log("body", body[0].innerText);
-		
+		if(rpNo == $(this).parents(".card").data("reply-no")) {
 		var html = "<textarea cols='70' rows='2' style='width:100%;' id='rvtInCn'>"+body[0].innerText+"</textarea><br>";
 		html += "<button class='btn btn-sm btn-primary' id='rvInUdtBtn'>수정</button><button class='btn btn-sm btn-danger' id='rvtInCancelBtn'>취소</button>";
 		console.log("body", body[0].innerText);
 		body[0].innerHTML = html;
+		}
 	});
 	
 	rpBody.on("click", "#rvInUdtBtn", function(){
@@ -245,7 +255,7 @@ $(function(){
 		console.log("rp: " + rp);
 		
 		$.ajax({
-        	type: "post",
+        	type: "POST",
         	url: "/board/updateReply.do",
         	data: {
         		replyNo: rpNo,
@@ -260,7 +270,7 @@ $(function(){
             	console.log(response);
             	if(response.status == "success") {
             		alert(response.message);
-            		location.href = reponse.redirectUrl;
+            		/* window.location.href = response.redirectUrl; */
             	}
             }
         })
@@ -270,6 +280,7 @@ $(function(){
 		var rp = $(this).parents("#replyContent").find("#rvtInCn").text();
 		var body = $(this).parents("#replyContent");
 		body[0].innerHTML = rp;
+		location.href = ""
 	});
 	
 	

@@ -52,11 +52,10 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 		
 		log.warn("ROLE_NAMES : " + roleNames);
 		
-			
-//		if(roleNames.contains("ROLE_MEMBER")) {
-//			response.sendRedirect("dashboard");
-//			return;
-//		}
+		if (roleNames.contains("ROLE_USER")) {
+	        response.sendRedirect(request.getContextPath() + "/board/memBoardList.do");
+	        return;  // 리다이렉트 후 더 이상 진행하지 않도록 return
+	    }
 		
 		super.onAuthenticationSuccess(request, response, auth);
 	}

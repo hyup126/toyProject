@@ -17,7 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
@@ -124,16 +126,18 @@ public class MemBoardController {
 	
 	@RequestMapping(value = "/memBoardModify.do")
 	public String memBoardModify(int memBoardNo, Model model) throws Exception {
-		MemBoardVO memBoardVo = memBoardService.selectMemBoardModify(memBoardNo);
+		MemBoardVO memBoardVo = memBoardService.selectMemBoardDetail(memBoardNo);
 		
 		model.addAttribute("memBoard", memBoardVo);
 		
 		return "memBoard/memBoardModify";
 	}
 	
-	@RequestMapping(value = "/memBoardUpdate.do")
+	@RequestMapping(value = "/memBoardUpdate.do", method = RequestMethod.POST)
 	public String memBoardUpdate(MemBoardVO memBoardVo, Model model) throws Exception {
-		
+			System.out.println("시발롬들아");
+			log.info("String");
+			log.info("memBoardVo: " + memBoardVo.getMemBoardTitle());
 	        int res = memBoardService.updateBoard(memBoardVo);
 
 	        if (res > 0) {
@@ -141,8 +145,8 @@ public class MemBoardController {
 	        } else {
 	            log.info("수정 실패");
 	        }
-	    
-	    return "redirect:/board/memBoardList.do";
+	        
+	    return "redirect:/board/memBoardDetail.do?memBoardNo=" + memBoardVo.getMemBoardNo();
 	}
 	
 	@RequestMapping(value = "/memBoardDelete.do")

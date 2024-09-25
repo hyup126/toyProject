@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
@@ -52,7 +54,6 @@ public class ReplyController {
 		
 		HttpSession session = request.getSession();
 		String memId = (String)session.getAttribute("memId");
-		log.info("쓰레기같은놈들아");
 		replyVo.setReplyWriter(memId);
 		
 		int res = replyService.insertReply(replyVo);
@@ -69,26 +70,28 @@ public class ReplyController {
 		
 	}
 	
-	@RequestMapping(value = "/updateReply.do")
-	public Map<String, Object> updateReply(ReplyVO replyVo, int memBoardNo) {
-		Map<String, Object> response = new HashMap<String, Object>();
+	@RequestMapping(value = "/updateReply.do" , method = RequestMethod.POST)
+	public Map<String, Object> updateReply(HttpServletRequest request
+			, HttpServletResponse response, ReplyVO replyVo, int memBoardNo) {
 		
+		Map<String, Object> result = new HashMap<String, Object>();
 		int res = replyService.updateReply(replyVo);
 		if(res > 0) {
 			log.info("수정 성공");
-			response.put("status", "success");
-	        response.put("message", "댓글이 성공적으로 삭제되었습니다.");
-	        response.put("redirectUrl", "/board/memBoardDetail.do?memBoardNo=" + memBoardNo);
-		} else {
-			log.info("수정 실패");
-			response.put("status", "success");
-	        response.put("message", "댓글이 성공적으로 삭제되었습니다.");
-	        response.put("redirectUrl", "/board/memBoardDetail.do?memBoardNo=" + memBoardNo);
-		}
+			result.put("status", "success");
+			result.put("message", "댓글이 성공적으로 삭제되었습니다.");
+//			result.put("redirectUrl", "/board/memBoardDetail.do?memBoardNo=" + memBoardNo);
+		} 
+//		else {
+//			log.info("수정 실패");
+//			result.put("status", "success");
+//			result.put("message", "댓글이 성공적으로 삭제되었습니다.");
+//			result.put("redirectUrl", "/board/memBoardDetail.do?memBoardNo=" + memBoardNo);
+//		}
+//		
+//		result.put("memBoardNo", memBoardNo); // memBoardNo를 응답에 추가
 		
-		response.put("memBoardNo", memBoardNo); // memBoardNo를 응답에 추가
-		
-		return response;
+		return result;
 	}
 	
 	@RequestMapping(value = "/deleteReply.do", method = RequestMethod.POST)

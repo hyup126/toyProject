@@ -166,23 +166,19 @@ body {
 
         <!-- 게시글 수정 폼 -->
         <form id="modifyForm" action="/board/memBoardUpdate.do" method="post" class="form-horizontal">
-            <input type="hidden" name="memBoardNo" value="${memBoard.memBoardNo}" />
         	<sec:csrfInput/>
+            <input type="hidden" name="memBoardNo" value="${memBoard.memBoardNo}" />
             <div class="form-group">
                 <label for="memBoardTitle">제목:</label>
-                <input type="text" id="memBoardTitle" name="memBoardTitle" class="form-control" value="${memBoard.memBoardTitle}" required />
+                <input type="text" id="memBoardTitle" name="memBoardTitle" class="form-control" value="${memBoard.memBoardTitle}" />
             </div>
             <div class="form-group">
                 <label for="memBoardWriter">작성자:</label>
-                <input type="text" id="memBoardWriter" name="memBoardWriter" class="form-control" value="${memBoard.memBoardWriter}" required />
+                <input type="text" id="memBoardWriter" name="memBoardWriter" class="form-control" value="${memBoard.memBoardWriter}" readonly />
             </div>
             <div class="form-group">
                 <label for="memBoardContent">내용:</label>
                 <textarea id="memBoardContent" name="memBoardContent" class="form-control" rows="10" required>${memBoard.memBoardContent}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="regDate">등록일:</label>
-                <input type="text" id="regDate" name="regDate" class="form-control" value="${memBoard.regDate}" readonly />
             </div>
             <div class="form-group">
                 <button type="button" id="updateBtn" class="btn_blue_l">수정 완료</button>
@@ -197,6 +193,7 @@ body {
 			var modifyForm = $("#modifyForm");
 			var memBoardTitle = $("#memBoardTitle").val();
 			var memBoardContent = $("#memBoardContent").val();
+			var memBoardNo = $("#memBoardNo").val();
 			if(memBoardTitle == null || memBoardTitle == "") {
 				alert("제목을 입력해주세요");
 				$("#memBoardTitle").focus();
@@ -209,8 +206,8 @@ body {
 				return false;
 			}
 			
-			alert("수정이 완료되었습니다.");
 			$("#modifyForm").submit();
+			/* location.href = "/board/memBoardDetail.do?memBoardNo=" + memBoardNo; */
 		})
 	})
 </script>
