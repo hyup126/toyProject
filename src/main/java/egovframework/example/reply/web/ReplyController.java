@@ -12,9 +12,13 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,51 +73,48 @@ public class ReplyController {
 		return "redirect:/board/memBoardDetail.do?memBoardNo=" + memBoardNo;
 		
 	}
-	
-	@RequestMapping(value = "/updateReply.do" , method = RequestMethod.POST)
+	@ResponseBody
+	@PostMapping(value = "/updateReply.do")
 	public Map<String, Object> updateReply(HttpServletRequest request
-			, HttpServletResponse response, ReplyVO replyVo, int memBoardNo) {
+			, HttpServletResponse response, @RequestBody ReplyVO replyVo) {
+		log.info("replyVo ::"+ replyVo.getReplyContent());
 		
 		Map<String, Object> result = new HashMap<String, Object>();
+		
 		int res = replyService.updateReply(replyVo);
-		if(res > 0) {
-			log.info("수정 성공");
-			result.put("status", "success");
-			result.put("message", "댓글이 성공적으로 삭제되었습니다.");
-//			result.put("redirectUrl", "/board/memBoardDetail.do?memBoardNo=" + memBoardNo);
+		if(res == 0) {
+			log.info("수정 실패");
+			result.put("result", "fail");
+			result.put("msg", "수정 실패");
+			return result;
 		} 
-//		else {
-//			log.info("수정 실패");
-//			result.put("status", "success");
-//			result.put("message", "댓글이 성공적으로 삭제되었습니다.");
-//			result.put("redirectUrl", "/board/memBoardDetail.do?memBoardNo=" + memBoardNo);
-//		}
-//		
-//		result.put("memBoardNo", memBoardNo); // memBoardNo를 응답에 추가
+		
+		result.put("result", "success");
+		result.put("resultData", replyVo);
 		
 		return result;
 	}
 	
-	@RequestMapping(value = "/deleteReply.do", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> deleteReply(int replyNo, int memBoardNo) {
-	    Map<String, Object> response = new HashMap<>();
+	@PostMapping(value = "/deleteReply.do")
+	public Map<String, Object> deleteReply(@RequestBody Map<String, Integer> request) {
+		int replyNo = request.get("replyNo");
+		log.info("replyNo : " + replyNo);
+	    Map<String, Object> result = new HashMap<>();
 
 	    int res = replyService.deleteReply(replyNo);
 	    
-	    if (res > 0) {
-	        log.info("삭제 성공");
-	        response.put("status", "success");
-	        response.put("message", "댓글이 성공적으로 삭제되었습니다.");
-	        response.put("redirectUrl", "/board/memBoardDetail.do?memBoardNo=" + memBoardNo);
-	    } else {
-	        log.info("삭제 실패");
-	        response.put("status", "fail");
-	        response.put("message", "댓글 삭제에 실패하였습니다.");
-	    }
-
-	    response.put("memBoardNo", memBoardNo); // memBoardNo를 응답에 추가
-	    return response;
+	    if(res == 0) {
+			log.info("삭제 실패");
+			result.put("result", "fail");
+			result.put("msg", "삭제 실패");
+			return result;
+		} 
+		
+	    result.put("result", "success");
+	    result.put("resultNo", "replyNo");
+		
+		return result;
 	}
 	
 }

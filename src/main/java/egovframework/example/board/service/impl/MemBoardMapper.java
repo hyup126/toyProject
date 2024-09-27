@@ -2,6 +2,7 @@ package egovframework.example.board.service.impl;
 
 import java.util.List;
 
+import egovframework.example.board.service.ComntFileDetailVO;
 import egovframework.example.board.service.MemBoardVO;
 import egovframework.example.reply.service.ReplyVO;
 import egovframework.example.sample.service.SampleDefaultVO;
@@ -27,5 +28,7 @@ public interface MemBoardMapper {
 	public int memBoardDelete(int memBoardNo) throws Exception;
 
 	public List<ReplyVO> selectReplyList(int memBoardNo);
+
+	public void saveFileDetails(ComntFileDetailVO comntFileDetailVo);
 
 }

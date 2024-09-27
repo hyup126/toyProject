@@ -19,33 +19,40 @@
     </script>
     <style>
         body {
-            background-color: #ffffff;
-        }
-        div#border {
-            width: 1250px; /* 너비를 1250px로 설정 */
-            margin: 0 auto; /* 중앙 정렬 */
-            padding: 20px;
-        }
-        .listTable {
-            border-top: #1A90D8 2px solid;
-            border-bottom: #BABABA 1px solid;
-            border-collapse: collapse;
-            width: 100%;
-            table-layout: fixed;
-        }
-        .listTable th {
-            border-bottom: #A3A3A3 1px solid;
-            padding: 2px;
-            background-color: #E4EAF8;
-            height: 20px;
-            text-align: center;
-        }
-        .listTable td {
-            border-bottom: #E0E0E0 1px solid;
-            padding: 2px;
-            background-color: #F7F7F7;
-            height: auto;
-        }
+		    font-family: Arial, sans-serif;
+		    background-color: #f4f4f4;
+		    margin: 0;
+		    padding: 20px;
+		}
+		
+		.post-container {
+		    background: white;
+		    border-radius: 8px;
+		    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		    padding: 20px;
+		    max-width: 1600px;
+		    margin: auto;
+		}
+		
+		.post-title {
+		    font-size: 24px;
+		    margin: 0;
+		}
+		
+		.post-meta {
+		    font-size: 14px;
+		    color: #555;
+		    margin: 10px 0;
+		}
+		
+		.post-views {
+		    margin-left: 15px;
+		}
+		
+		.post-content {
+		    font-size: 16px;
+		    line-height: 1.6;
+		}
         .card {
             margin-bottom: 20px; /* 카드 사이 간격 */
             border: 1px solid #ddd; /* 카드 경계선 */
@@ -63,9 +70,6 @@
             white-space: pre;
             margin-bottom: 10px; /* 입력창과 버튼 간격 */
         }
-        #replyContent {
-        	word-break: break-word;
-        }
     </style>
 </head>
 <body>
@@ -73,31 +77,18 @@
         <h1>게시물 상세보기</h1>
 
         <!-- 게시물 상세보기 영역 -->
-        <table class="listTable">
-            <tr>
-                <th colspan="2">게시물 정보</th>
-            </tr>
-            <tr>
-                <td class="listCenter">제목:</td>
-                <td>${memBoard.memBoardTitle}</td>
-            </tr>
-            <tr>
-                <td class="listCenter">작성자:</td>
-                <td>${memBoard.memBoardWriter}</td>
-            </tr>
-            <tr>
-            	<fmt:formatDate value="${memBoard.regDate}" var="regDate" pattern="yyyy-MM-dd"/>
-                <td class="listCenter">등록일:</td>
-                <td>${regDate}</td>
-            </tr>
-            <tr>
-                <td class="listCenter">조회수:</td>
-                <td>${memBoard.memBoardHit}</td>
-            </tr>
-            <tr>
-                <td style="height:auto; width: 100%; word-break: break-word;"><pre>${memBoard.memBoardContent}</pre></td>
-            </tr>
-        </table>
+        <div class="post-container">
+	        <h1 class="post-title">${memBoard.memBoardTitle}</h1>
+	        <div class="post-meta">
+	            <span class="post-author">${memBoard.memBoardWriter}</span>
+	            <fmt:formatDate value="${memBoard.regDate}" var="regDate" pattern="yyyy-MM-dd"/>
+	            <span class="post-date">${regDate}</span>
+	            <span class="post-views">${memBoard.memBoardHit}</span>
+	        </div>
+	        <div class="post-content">
+	            <p>${memBoard.memBoardContent}</p>
+	        </div>
+	    </div>
 
         <!-- 댓글 목록 시작 -->
         <div class="card">
@@ -115,15 +106,17 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <span id="repWriter" >${reply.replyWriter }</span>
                                 <small class="text-body-secondary"> 
-                                    <button class="btn btn-sm btn-primary replyUdt" id="replyUdt">수정</button>
+                                    <button class="btn btn-sm btn-primary replyUdt" type="button" id="replyUdt">수정</button>
                                     <button type="button" class="btn btn-sm btn-danger" id="delRplBtn">삭제</button>
                                 </small>
                                 
                             </div>
                         </div>
                         <div class="card-body"> 
-                            <pre id="replyContent"><c:out value="${reply.replyContent }" escapeXml="true"/></pre>
-                        </div>    
+				            <div class="replyContent" data-original-content="${reply.replyContent}">
+				                <pre><c:out value="${reply.replyContent }" escapeXml="true"/></pre>
+				            </div>
+				        </div>    
                     </div>
                     <br/>
                 </c:forEach>
@@ -187,23 +180,33 @@ $(function(){
         console.log("rpNo: " + rpNo);
         console.log("memBoardNo: " + memBoardNo)
 		
+        var data = {
+        	replyNo: rpNo,
+    		memBoardNo: memBoardNo
+        }
+        
         $.ajax({
         	type: "post",
         	url: "/board/deleteReply.do",
-        	data: {
-        		replyNo: rpNo,
-        		memBoardNo: memBoardNo
-        	},
+        	data: JSON.stringify(data),
+        	dataType:'json',
+  		    contentType : "application/json", 
         	beforeSend: function(xhr) {
                 // 데이터를 전송하기 전에 헤더에 CSRF 값을 설정한다.
                 xhr.setRequestHeader(header, token);
             },
-            success: function(response) {
-            	console.log(response);
-            	if(response.status == "success") {
-            		alert(response.message);
-            		response.redirectUrl;
+            success: function(res) {
+            	console.log("333333 : " + res);
+            	if(res.result == "success") {
+            		alert("삭제 성공");
+            		location.reload();
+            	} else if(res.result == "fail") {
+            		alert(res.msg);
+            		return;
             	}
+            },
+            error:function(xhr){
+            	console.log(xhr.status);
             }
         })
         
@@ -211,33 +214,33 @@ $(function(){
 	
 	/* 댓글 삭제 끝 */
 	/* 댓글 수정 */
-	rpBody.on("click", "#replyUdt", function(){
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-		
-		var replyContent = $("#replyContent").val();
-		
-		var rpCard = $(this).closest(".card");
-		var rpNo = $(this).parents(".card").data("reply-no");
-        var memBoardNo = $(this).parents(".card").data("memboard-no");
+	rpBody.on("click", "#replyUdt", function() {
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+
+    // 클릭된 버튼이 속한 카드 요소를 찾음
+    var rpCard = $(this).closest(".card");
+    var rpNo = rpCard.data("reply-no");
+    var memBoardNo = rpCard.data("memboard-no");
+
+    console.log("rpCard: ", rpCard);
+    console.log("rpNo: " + rpNo);
+    console.log("memBoardNo: " + memBoardNo);
+
+    // 댓글 내용을 표시하는 부분을 찾음
+    var body = rpCard.find(".replyContent"); // 클래스 선택자로 변경
+    console.log("body", body);
+    console.log("body", body[0].innerText);
+
+    // textarea를 추가할 위치
+    if (rpNo == rpCard.data("reply-no")) {
+        var html = "<textarea cols='70' rows='2' style='width:100%;' id='rvtInCn'>" + body[0].innerText + "</textarea><br>";
+        html += "<button class='btn btn-sm btn-primary' id='rvInUdtBtn'>수정</button><button class='btn btn-sm btn-danger' id='rvtInCancelBtn'>취소</button>";
         
-        
-        
-        console.log("rpCard: ", rpCard);
-        console.log("rpNo: " + rpNo);
-        console.log("memBoardNo: " + memBoardNo);
-        console.log("replyNo: " + $(this).parents(".card").data("reply-no"));
-        
-		var body = $(this).parents(".card").find("#replyContent");
-		console.log("body", body);
-		console.log("body", body[0].innerText);
-		if(rpNo == $(this).parents(".card").data("reply-no")) {
-		var html = "<textarea cols='70' rows='2' style='width:100%;' id='rvtInCn'>"+body[0].innerText+"</textarea><br>";
-		html += "<button class='btn btn-sm btn-primary' id='rvInUdtBtn'>수정</button><button class='btn btn-sm btn-danger' id='rvtInCancelBtn'>취소</button>";
-		console.log("body", body[0].innerText);
-		body[0].innerHTML = html;
-		}
-	});
+        // body의 내용을 새 HTML로 변경
+        body[0].innerHTML = html;
+    }
+});
 	
 	rpBody.on("click", "#rvInUdtBtn", function(){
 		var token = $("meta[name='_csrf']").attr("content");
@@ -247,40 +250,53 @@ $(function(){
 		var rpNo = rpCard.data("reply-no");
         var memBoardNo = rpCard.data("memboard-no");
         
-        console.log("rpCard: ", rpCard);
+        /* console.log("rpCard: ", rpCard);
         console.log("rpNo: " + rpNo);
-        console.log("memBoardNo: " + memBoardNo);
+        console.log("memBoardNo: " + memBoardNo); */
 		
-		var rp = $(this).parents("#replyContent").find("#rvtInCn").val();
-		console.log("rp: " + rp);
+        var rp = $(this).closest(".card").find("#rvtInCn").val();
+		/* console.log("rp: " + rp); */
+		
+		var data = {replyNo: rpNo, replyContent: rp, memBoardNo: memBoardNo}
 		
 		$.ajax({
         	type: "POST",
         	url: "/board/updateReply.do",
-        	data: {
-        		replyNo: rpNo,
-        		replyContent: rp,
-        		memBoardNo: memBoardNo
-        	},
+        	data: JSON.stringify(data),
+        	dataType:'json',
+		    contentType : "application/json;", 
+		  /* cache : false, */
         	beforeSend: function(xhr) {
                 // 데이터를 전송하기 전에 헤더에 CSRF 값을 설정한다.
                 xhr.setRequestHeader(header, token);
+//                 xhr.setRequestHeader("Content-type","application/json");
             },
-            success: function(response) {
-            	console.log(response);
-            	if(response.status == "success") {
-            		alert(response.message);
-            		/* window.location.href = response.redirectUrl; */
+            success : function(res) {
+            	console.log("222222222: " + res);
+            	if(res.result == "success") {
+            		alert("수정 완료");
+            		location.reload();
+            	} else if(res.result == "fail") {
+            		alert(res.msg);
+            		return;
             	}
+            },
+            error:function(xhr){
+            	console.log(xhr.status);
             }
         })
 	})
 	
-	rpBody.on("click", "#rvtInCancelBtn", function(){
-		var rp = $(this).parents("#replyContent").find("#rvtInCn").text();
-		var body = $(this).parents("#replyContent");
-		body[0].innerHTML = rp;
-		location.href = ""
+	rpBody.on("click", "#rvtInCancelBtn", function() {
+	    // 수정 버튼이 속한 카드 요소를 찾음
+	    var rpCard = $(this).closest(".card");
+
+	    // 원래 댓글 내용을 찾음
+	    var body = rpCard.find(".replyContent"); // 클래스로 찾기
+	    var originalContent = body.data("original-content"); // 저장된 원래 내용 가져오기
+
+	    // 댓글 내용을 원래대로 되돌리기
+	    body[0].innerHTML = originalContent;
 	});
 	
 	

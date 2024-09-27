@@ -6,11 +6,11 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="strategy" 	ref="mixPrefixSample" />
 		<property name="blockSize" 	value="10"/>
-		<property name="table"	   	value="IDS"/>
-		<property name="tableName"	value="SAMPLE"/>
+		<property name="table"	   	value="COMTECOPSEQ"/>
+		<property name="tableName"	value="ATCH_FILE_ID"/>
 	</bean>
 	<bean name="mixPrefixSample" class="egovframework.rte.fdl.idgnr.impl.strategy.EgovIdGnrStrategyImpl">
-		<property name="prefix"   value="SAMPLE-" />
+		<property name="prefix"   value="FILE_" />
 		<property name="cipers"   value="5" />
 		<property name="fillChar" value="0" />
 	</bean>	

@@ -1,6 +1,11 @@
 package egovframework.example.board.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 public class MemBoardVO {
 
@@ -12,6 +17,10 @@ public class MemBoardVO {
 	private Date updateDate;
 	private char delYn;
 	private int memBoardHit;
+	// 이미지 저장
+	private MultipartFile picture;
+	private MultipartFile[] memBoardFile;
+	private List<ComntFileDetailVO> memBoardFileList;
 	
 	public int getMemBoardNo() {
 		return memBoardNo;
@@ -61,5 +70,38 @@ public class MemBoardVO {
 	public void setMemBoardHit(int memBoardHit) {
 		this.memBoardHit = memBoardHit;
 	}
+	public MultipartFile getPicture() {
+		return picture;
+	}
+	public void setPicture(MultipartFile picture) {
+		this.picture = picture;
+	}
+	public MultipartFile[] getMemBoardFile() {
+		return memBoardFile;
+	}
+	public void setMemBoardFile(MultipartFile[] memBoardFile) {
+		this.memBoardFile = memBoardFile;
+	}
+	public List<ComntFileDetailVO> getMemBoardFileList() {
+		return memBoardFileList;
+	}
+	public void setMemBoardFileList(List<ComntFileDetailVO> memBoardFileList) {
+		this.memBoardFileList = memBoardFileList;
+	}
+	
+//	public void memBoardFile(MultipartFile[] memBoardFile) {
+//		this.memBoardFile = memBoardFile;
+//		if(memBoardFile != null) {
+//			List<ComntFileDetailVO> memBoardFileList = new ArrayList<ComntFileDetailVO>();
+//			for(MultipartFile item : memBoardFile) {
+//				if(StringUtils.isBlank(item.getOriginalFilename())) {
+//					continue;
+//				}
+//				ComntFileDetailVO comntFileDetailVO = new ComntFileDetailVO(item);
+//				memBoardFileList.add(comntFileDetailVO);
+//			}
+//			this.memBoardFileList = memBoardFileList;
+//		}
+//	}
 	
 }

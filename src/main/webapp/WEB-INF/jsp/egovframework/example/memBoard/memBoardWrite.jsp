@@ -1,19 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <title>게시물 작성</title>
-    <script
-  src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous">
-  </script>
-</head>
-<style>
-body {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <style>
+		body {
             background-color: #ffffff;
         }
         /* Border 크기 조정 및 중앙 정렬 */
@@ -159,42 +158,64 @@ body {
             background-color: #c9302c; /* 로그아웃 버튼 호버 색상 */
         }
 </style>
+</head>
 <body>
     <div id="border">
         <h1>게시물 작성</h1>
 
-        <form name="memBoardForm" action="/board/memBoardSave.do" method="post">
-        	<sec:csrfInput />
-            <table class="listTable">
-                <tr>
-                    <th colspan="2">게시물 정보 입력</th>
-                </tr>
-                <tr>
-                    <td class="listCenter">제목:</td>
-                    <td><input type="text" name="memBoardTitle" required></td>
-                </tr>
-                <tr>
-                    <td class="listCenter">작성자:</td>
-                    <td><input type="text" id="memBoardWriter" name="memBoardWriter" value="${memVO.memId }" readonly="readonly"></td>
-                </tr>
-                <tr>
-                    <td class="listCenter">내용:</td>
-                    <td><textarea name="memBoardContent" rows="10" cols="50" required></textarea></td>
-                </tr>
-            </table>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button type="submit" class="btn btn-primary">저장</button>
+        <form id="memBoardForm" method="post" action="/board/memBoardSave.do" enctype="multipart/form-data">
+            <sec:csrfInput />
+            <div class="form-group">
+                <label for="memBoardTitle">제목</label>
+                <input type="text" id="memBoardTitle" name="memBoardTitle">
             </div>
+            <div class="form-group">
+                <label for="memBoardWriter">작성자</label>
+                <input type="text" id="memBoardWriter" name="memBoardWriter" value="${memVO.memId }" readonly="readonly">
+            </div>
+            <div class="form-group">
+                <label for="content">내용</label>
+                <textarea id="memBoardContent" name="memBoardContent" rows="20" cols="100"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="memBoardFile">파일 업로드</label>
+                <input type="file" id="memBoardFile" name="memBoardFile" multiple>
+            </div>
+            <button id="submitBtn" type="button" class="btn btn-primary" style="float:right;">작성하기</button>
         </form>
 
         <div id="logoutButton">
             <a href="logout.jsp">로그아웃</a>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#submitBtn').click(function() {
+                var formData = new FormData($('#memBoardForm')[0]);
+                $.ajax({
+                    url: '/board/memBoardSave.do',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, 
+                    contentType: false, 
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') 
+                    },
+                    success: function(data) {
+                        alert('등록 완료: ' + data.message);
+                        window.location.href = '/board/memBoardList.do';
+                    },
+                    error: function(xhr, status, error) {
+                        alert('오류 발생: ' + xhr.statusText);
+                    }
+                });
+
+                // 추가적인 스크립트
+                var writer = $("#memBoardWriter").val();
+                console.log(writer);
+            });
+        });
+    </script>
 </body>
-<script type="text/javascript">
-	var writer = $("#memBoardWriter").val();
-	console.log(writer);
-</script>
 </html>

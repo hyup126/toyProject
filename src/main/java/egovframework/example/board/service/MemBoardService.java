@@ -23,4 +23,6 @@ public interface MemBoardService {
 
 	public List<ReplyVO> selectReplyList(int memBoardNo);
 
+	public void saveFileDetails(ComntFileDetailVO comntFileDetailVo);
+
 }

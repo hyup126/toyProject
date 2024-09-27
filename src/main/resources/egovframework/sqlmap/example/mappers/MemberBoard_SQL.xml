@@ -19,7 +19,7 @@
 	<select id="selectReplyList" resultType="replyVO" parameterType="int">
 		select replyNo, memBoardNo, replyWriter, replyContent, replyRegDate
 		from reply
-		where memBoardNo = #{memBoardNo} and delYn = 'N'
+		where memBoardNo = #{memBoardNo}
 		order by replyNo desc
 	</select>
 
@@ -109,6 +109,7 @@
                 </when>
             </choose>
         </if>
+	    order by memBoardNo desc
     )
     <![CDATA[
     WHERE RN > #{firstIndex} AND RN <= (#{firstIndex} + #{recordCountPerPage})
@@ -131,6 +132,27 @@
 				</choose>
 			</if>
 	</select>
+	
+	<!-- 파일업로드 SQL -->
+	<insert id="saveFileDetails" parameterType="comntFileDetailVO">
+		insert into comntfiledetail (
+			atch_file_id,
+			file_stre_cours,
+			stre_file_nm,
+			orignl_file_nm,
+			file_extsn,
+			file_size,
+			reg_date
+		) values (
+			'FILE_'||TO_CHAR(seq_atch_file_id.nextval),
+			#{fileStreCours},
+			#{streFileNm},
+			#{orignlFileNm},
+			#{fileExtsn},
+			#{fileSize},
+			TO_CHAR(sysdate, 'YYYY-MM-DD')
+		)
+	</insert>
 	
 	<!-- <select id="adminLogin" resultMap="admin">
 		select

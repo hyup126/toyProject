@@ -6,8 +6,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Error</title>
 </head>
-
 <body>
+<%
+        Throwable exception = (Throwable)request.getAttribute("exception");
+		exception.printStackTrace();
+%>
     <spring:message code='fail.common.msg' />
 </body>
 </html>

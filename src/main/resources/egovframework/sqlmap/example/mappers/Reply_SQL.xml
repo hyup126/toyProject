@@ -41,7 +41,7 @@
 		update reply
 			set
 				replyContent = #{replyContent}
-		where replyNo = #{replyNo}
+		where replyNo = #{replyNo} and memBoardNo = #{memBoardNo}
 	</update>
 
 

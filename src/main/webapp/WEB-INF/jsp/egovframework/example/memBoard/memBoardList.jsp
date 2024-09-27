@@ -230,22 +230,22 @@ body {
             </table>
          	<div class="pagination">
 			    <c:if test="${paginationInfo.currentPageNo > 1}">
-			        <a href="boardList.do?pageIndex=${paginationInfo.currentPageNo - 1}&searchCondition=${searchCondition}&searchKeyword=${searchKeyword}">이전</a>
+			        <a href="memBoardList.do?pageIndex=${paginationInfo.currentPageNo - 1}">이전</a>
 			    </c:if>
 			
-			    <c:forEach var="i" begin="1" end="${paginationInfo.pageSize}" step="1">
+			    <c:forEach var="i" begin="1" end="${paginationInfo.lastPageNoOnPageList}" step="1">
 			        <c:choose>
 			            <c:when test="${i == paginationInfo.currentPageNo}">
 			                <span class="active">${i}</span>
 			            </c:when>
 			            <c:otherwise>
-			                <a href="boardList.do?pageIndex=${i}&searchCondition=${searchCondition}&searchKeyword=${searchKeyword}">${i}</a>
+			                <a href="memBoardList.do?pageIndex=${i}">${i}</a>
 			            </c:otherwise>
 			        </c:choose>
 			    </c:forEach>
 			
 			    <c:if test="${hasNext}">
-			        <a href="boardList.do?pageIndex=${paginationInfo.currentPageNo + 1}&searchCondition=${searchCondition}&searchKeyword=${searchKeyword}">다음</a>
+			        <a href="memBoardList.do?pageIndex=${paginationInfo.currentPageNo + 1}">다음</a>
 			    </c:if>
 			</div>
         </div>

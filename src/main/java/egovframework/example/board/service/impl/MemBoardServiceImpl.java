@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import egovframework.example.board.service.ComntFileDetailVO;
 import egovframework.example.board.service.MemBoardService;
 import egovframework.example.board.service.MemBoardVO;
 import egovframework.example.reply.service.ReplyVO;
@@ -57,6 +58,9 @@ public class MemBoardServiceImpl implements MemBoardService {
 		return memBoardMapper.selectReplyList(memBoardNo);
 	}
 
-
+	@Override
+	public void saveFileDetails(ComntFileDetailVO comntFileDetailVo) {
+		memBoardMapper.saveFileDetails(comntFileDetailVo);
+	}
 
 }
