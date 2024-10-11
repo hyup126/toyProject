@@ -49,6 +49,12 @@
 		delete from reply
 		where replyNo = #{replyNo}
 	</update>
+	
+	<select id="selectCountReply" parameterType="replyVO" resultType="int">
+		select count(*) replyCnt
+		from reply
+		where memBoardNo = #{memBoardNo}
+	</select>
 
 	<!-- <select id="selectMemBoardDetail" resultMap="memBoard">
 

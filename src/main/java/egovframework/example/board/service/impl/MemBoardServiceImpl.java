@@ -1,5 +1,6 @@
 package egovframework.example.board.service.impl;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class MemBoardServiceImpl implements MemBoardService {
 	}
 
 	@Override
-	public List<?> selectMemBoardList(SampleDefaultVO searchVo) {
+	public List<MemBoardVO> selectMemBoardList(SampleDefaultVO searchVo) {
 		return memBoardMapper.selectMemBoardList(searchVo);
 	}
 
@@ -61,6 +62,41 @@ public class MemBoardServiceImpl implements MemBoardService {
 	@Override
 	public void saveFileDetails(ComntFileDetailVO comntFileDetailVo) {
 		memBoardMapper.saveFileDetails(comntFileDetailVo);
+	}
+
+	@Override
+	public ComntFileDetailVO selectMemBoardFile(String atchFileId) {
+		return memBoardMapper.selectMemBoardFile(atchFileId);
+	}
+
+	@Override
+	public void deleteMemBoardFile(String atchFileId) {
+		memBoardMapper.deleteMemBoardFile(atchFileId);
+	}
+
+	@Override
+	public void memBoardFileDelete(int memBoardNo) {
+		memBoardMapper.memBoardFileDelete(memBoardNo);
+	}
+
+	@Override
+	public ComntFileDetailVO selectFileInfo(String atchFileId) {
+		return memBoardMapper.selectFileInfo(atchFileId);
+	}
+
+	@Override
+	public void memReplyDelete(int memBoardNo) {
+		memBoardMapper.memReplyDelete(memBoardNo);
+	}
+
+	@Override
+	public List<ComntFileDetailVO> getFilePaths(int memBoardNo) {
+		return memBoardMapper.getFilePaths(memBoardNo);
+	}
+
+	@Override
+	public int selectCountReply(int memBoardNo) {
+		return memBoardMapper.selectCountReply(memBoardNo);
 	}
 
 }

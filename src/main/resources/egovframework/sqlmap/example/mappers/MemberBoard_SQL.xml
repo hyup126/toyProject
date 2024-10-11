@@ -3,13 +3,39 @@
 <mapper namespace="egovframework.example.board.service.impl.MemBoardMapper">
 
 	<resultMap id="memBoard" type="egovframework.example.board.service.MemBoardVO">
+		<id property="memBoardNo" column="memBoardNo"/>
 		<result property="memBoardNo" column="memBoardNo"/>
 		<result property="memBoardTitle" column="memBoardTitle"/>
 		<result property="memBoardContent" column="memBoardContent"/>
 		<result property="regDate" column="regDate"/>
 		<result property="delYn" column="delYn"/>
 		<result property="memBoardHit" column="memBoardHit"/>
+		<result property="atchFileId" column="file_stre_cours"/>
+		<collection property="memBoardFileList" resultMap="comntFileDetail"></collection>
+		<collection property="replyList" resultMap="reply"></collection>
 	</resultMap>
+	
+	<resultMap type="egovframework.example.board.service.ComntFileDetailVO" id="comntFileDetail">
+		<id property="atchFileId" column="atch_file_id"/>
+		<result property="atchFileId" column="atch_file_id"/>
+		<result property="memBoardNo" column="memBoardNo"/>
+		<result property="fileStreCours" column="file_stre_cours"/>
+		<result property="streFileNm" column="stre_file_nm"/>
+		<result property="orignlFileNm" column="orignl_file_nm"/>
+		<result property="fileExtsn" column="file_extsn"/>
+		<result property="fileSize" column="file_size"/>
+		<result property="regDate" column="reg_date"/>
+	</resultMap>
+	
+	<resultMap type="egovframework.example.reply.service.ReplyVO" id="reply">
+		<id property="replyNo" column="replyNo"/>
+		<result property="memBoardNo" column="memBoardNo"/>
+		<result property="replyWriter" column="replyWriter"/>
+		<result property="replyContent" column="replyContent"/>
+		<result property="replyRegDate" column="replyRegDate"/>
+		<result property="delYn" column="delYn"/>
+	</resultMap>
+	
 	<!-- <resultMap type="egovframework.example.sample.service.Admin" id="admin">
 		<result property="username" column="username"/>
 		<result property="password" column="password"/>
@@ -21,6 +47,18 @@
 		from reply
 		where memBoardNo = #{memBoardNo}
 		order by replyNo desc
+	</select>
+	
+	<delete id="memReplyDelete" parameterType="int">
+		delete from reply where memBoardNo = #{memBoardNo}
+	</delete>
+	
+	<select id="selectCountReply" parameterType="int" resultType="int">
+		select 
+			count(*) replyCnt
+			from reply
+		where
+			memBoardNo = #{memBoardNo}
 	</select>
 
 	<!-- 게시판 SQL -->
@@ -77,10 +115,19 @@
 	<select id="selectMemBoardDetail" resultMap="memBoard">
 
 			SELECT
-				memBoardNo, memBoardTitle, memBoardWriter, memBoardContent, regDate, updateDate, memBoardHit
+				memboard.memBoardNo, memboard.memBoardTitle, memboard.memBoardWriter, memboard.memBoardContent, 
+				memboard.regDate, memboard.updateDate, memboard.memBoardHit
+				, comntfiledetail.atch_file_id,
+			comntfiledetail.memBoardNo,
+			comntfiledetail.file_stre_cours,
+			comntfiledetail.stre_file_nm,
+			comntfiledetail.orignl_file_nm,
+			comntfiledetail.file_extsn,
+			comntfiledetail.file_size,
+			comntfiledetail.reg_date
 			FROM memboard
-			WHERE memBoardNo=#{memBoardNo}
-
+			left outer join comntfiledetail on memboard.memBoardNo = comntfiledetail.memBoardNo
+			WHERE memboard.memBoardNo=#{memBoardNo}
 	</select>
 	
 	<update id="incrementHit" parameterType="int">
@@ -89,14 +136,14 @@
 			memBoardHit = memBoardHit + 1
 		where memBoardNo = #{memBoardNo}
 	</update>
-
+	
 	<select id="selectMemBoardList" parameterType="searchVO" resultType="memBoardVO">
 
 			SELECT *
     FROM (
         SELECT
             memBoardNo, memBoardTitle, memBoardWriter, regDate, memBoardHit,
-            ROW_NUMBER() OVER (ORDER BY memBoardNo ASC) AS RN
+            ROW_NUMBER() OVER (ORDER BY memBoardNo desc) AS RN
         FROM memboard
         WHERE 1=1
         <if test="searchKeyword != null and searchKeyword != ''">
@@ -109,7 +156,6 @@
                 </when>
             </choose>
         </if>
-	    order by memBoardNo desc
     )
     <![CDATA[
     WHERE RN > #{firstIndex} AND RN <= (#{firstIndex} + #{recordCountPerPage})
@@ -137,6 +183,7 @@
 	<insert id="saveFileDetails" parameterType="comntFileDetailVO">
 		insert into comntfiledetail (
 			atch_file_id,
+			memBoardNo,
 			file_stre_cours,
 			stre_file_nm,
 			orignl_file_nm,
@@ -145,6 +192,7 @@
 			reg_date
 		) values (
 			'FILE_'||TO_CHAR(seq_atch_file_id.nextval),
+			#{memBoardNo},
 			#{fileStreCours},
 			#{streFileNm},
 			#{orignlFileNm},
@@ -153,6 +201,51 @@
 			TO_CHAR(sysdate, 'YYYY-MM-DD')
 		)
 	</insert>
+	
+	<select id="selectMemBoardFile" parameterType="string" resultType="comntFileDetailVO">
+	    select
+	        atch_file_id,
+	        memBoardNo,
+	        file_stre_cours,
+	        stre_file_nm,
+	        orignl_file_nm,
+	        file_extsn,
+	        file_size,
+	        reg_date
+	    from comntfiledetail
+	    where atch_file_id = #{atchFileId}
+	</select>
+	
+	<delete id="deleteMemBoardFile" parameterType="string">
+	    DELETE FROM comntfiledetail
+	    WHERE atch_file_id = #{atchFileId}
+	</delete>
+	
+	<delete id="memBoardFileDelete" parameterType="int">
+		DELETE FROM comntfiledetail
+	    WHERE memBoardNo = #{memBoardNo}
+	</delete>
+	
+	<select id="getFilePaths" parameterType="int" resultType="comntFileDetailVO">
+        SELECT file_stre_cours, stre_file_nm
+        FROM comntfiledetail 
+        WHERE memBoardNo = #{memBoardNo}
+    </select>
+	
+	<!-- 파일 다운로드 -->
+	<select id="selectFileInfo" parameterType="string" resultType="comntFileDetailVO">
+		select
+			atch_file_id,
+	        memBoardNo,
+	        file_stre_cours,
+	        stre_file_nm,
+	        orignl_file_nm,
+	        file_extsn,
+	        file_size,
+	        reg_date
+	    from comntfiledetail
+	    where atch_file_id = #{atchFileId} 
+	</select>
 	
 	<!-- <select id="adminLogin" resultMap="admin">
 		select

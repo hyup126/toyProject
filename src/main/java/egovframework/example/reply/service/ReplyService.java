@@ -8,4 +8,6 @@ public interface ReplyService {
 
 	public int deleteReply(int replyNo);
 
+	public int selectCountReply(int memBoardNo);
+
 }

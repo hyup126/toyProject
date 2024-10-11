@@ -14,4 +14,6 @@ public interface ReplyMapper {
 
 	public int deleteReply(int replyNo);
 
+	public int selectCountReply(int memBoardNo);
+
 }

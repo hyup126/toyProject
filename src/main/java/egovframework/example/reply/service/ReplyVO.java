@@ -9,7 +9,14 @@ public class ReplyVO {
 	private String replyWriter;
 	private String replyContent;
 	private Date replyRegDate;
+	private char delYn;
 	
+	public char getDelYn() {
+		return delYn;
+	}
+	public void setDelYn(char delYn) {
+		this.delYn = delYn;
+	}
 	public int getReplyNo() {
 		return replyNo;
 	}

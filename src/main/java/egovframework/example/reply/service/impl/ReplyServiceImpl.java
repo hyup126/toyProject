@@ -28,6 +28,11 @@ public class ReplyServiceImpl implements ReplyService {
 	public int deleteReply(int replyNo) {
 		return replyMapper.deleteReply(replyNo);
 	}
+
+	@Override
+	public int selectCountReply(int memBoardNo) {
+		return replyMapper.selectCountReply(memBoardNo);
+	}
 	
 
 	

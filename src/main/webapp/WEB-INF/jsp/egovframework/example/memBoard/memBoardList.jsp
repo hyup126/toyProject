@@ -4,6 +4,7 @@
 <%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -180,18 +181,19 @@ body {
         
         <!-- 로그아웃 버튼 -->
         <div id="logoutButton">
-            <a href="<c:url value='/logout'/>">로그아웃</a>
+            <a href="<c:url value='/logout.do'/>">로그아웃</a>
+            <sec:csrfInput/>
         </div>
 	         <div id="search">
 	            <label for="searchCondition">검색 조건</label>
 	            <select name="searchCondition" id="searchCondition" class="use">
-	                <option value="0">제목</option>
-	                <option value="1">작성자</option>
+	                <option value="0" <c:if test="${searchType eq 'memBoardTitle' }">selected</c:if>>제목</option>
+	                <option value="1" <c:if test="${searchType eq 'memBoardWriter' }">selected</c:if>>작성자</option>
 	            </select>
 	            <label for="searchKeyword">검색어</label>
-	            <input type="text" name="searchKeyword" id="searchKeyword" class="txt"/>
+	            <input type="text" name="searchKeyword" id="searchKeyword" value="${searchKeyword != null ? searchKeyword : ''}" class="txt"/>
 	            <span class="btn_blue_l">
-	                <a href="javascript:fn_egov_selectList();">검색</a>
+	                <a href="javascript:fn_egov_selectList();">검색</a> 
 	            </span>
 	        </div>
 	        
@@ -200,6 +202,7 @@ body {
 	            <span class="btn_blue_l">
 	                <a href="<c:url value='/board/memBoardWrite.do'/>">게시물 등록</a>
 	            </span>
+	            <span style="margin-left: 10px;">총 게시물 수: ${totCnt}</span>
 	        </div>
 	        <br>
         <div id="content_pop">
@@ -220,9 +223,10 @@ body {
                     <c:forEach var="memBoard" items="${memBoardList}" varStatus="status">
                         <tr>
                             <td class="listCenter">${memBoard.memBoardNo}</td>
-                            <td class="listCenter"><a href="/board/memBoardDetail.do?memBoardNo=${memBoard.memBoardNo}">${memBoard.memBoardTitle}</a></td>
+                            <td class="listCenter"><a href="/board/memBoardDetail.do?memBoardNo=${memBoard.memBoardNo}&searchCondition=${searchCondition}&searchKeyword=${searchKeyword}">${memBoard.memBoardTitle}</a>[${replyCnt}]</td>
                             <td class="listCenter">${memBoard.memBoardWriter}</td>
-                            <td class="listCenter">${memBoard.regDate}</td>
+                            <fmt:formatDate value="${memBoard.regDate}" var="regDate" pattern="yyyy-MM-dd"/>
+                            <td class="listCenter">${regDate}</td>
                             <td class="listCenter">${memBoard.memBoardHit}</td>
                         </tr>
                     </c:forEach>
@@ -230,7 +234,7 @@ body {
             </table>
          	<div class="pagination">
 			    <c:if test="${paginationInfo.currentPageNo > 1}">
-			        <a href="memBoardList.do?pageIndex=${paginationInfo.currentPageNo - 1}">이전</a>
+			        <a href="memBoardList.do?pageIndex=${paginationInfo.currentPageNo - 1}&searchCondition=${searchCondition}&searchKeyword=${searchKeyword}">이전</a>
 			    </c:if>
 			
 			    <c:forEach var="i" begin="1" end="${paginationInfo.lastPageNoOnPageList}" step="1">
@@ -239,16 +243,29 @@ body {
 			                <span class="active">${i}</span>
 			            </c:when>
 			            <c:otherwise>
-			                <a href="memBoardList.do?pageIndex=${i}">${i}</a>
+			                <a href="memBoardList.do?pageIndex=${i}&searchCondition=${searchCondition}&searchKeyword=${searchKeyword}">${i}</a>
 			            </c:otherwise>
 			        </c:choose>
 			    </c:forEach>
 			
 			    <c:if test="${hasNext}">
-			        <a href="memBoardList.do?pageIndex=${paginationInfo.currentPageNo + 1}">다음</a>
+			        <a href="memBoardList.do?pageIndex=${paginationInfo.currentPageNo + 1}&searchCondition=${searchCondition}&searchKeyword=${searchKeyword}">다음</a>
 			    </c:if>
 			</div>
         </div>
 </form>
 </body>
+<script type="text/javascript">
+    /* 글 목록 화면 function */
+    function fn_egov_selectList() {
+        // 검색 조건과 키워드를 가져옵니다.
+        var searchCondition = document.getElementById("searchCondition").value;
+        var searchKeyword = document.getElementById("searchKeyword").value;
+
+        // 검색 결과를 가져오는 URL을 설정합니다.
+        var url = "/board/memBoardList.do?searchCondition=" + searchCondition + "&searchKeyword=" + encodeURIComponent(searchKeyword);
+        // 페이지를 해당 URL로 이동합니다.
+        location.href = url;
+    }
+</script>
 </html>

@@ -70,9 +70,34 @@
             white-space: pre;
             margin-bottom: 10px; /* 입력창과 버튼 간격 */
         }
+        .down_btn button{
+		    background: #222;
+		    font-size: 12px;
+		    color: #fff;
+		    cursor: pointer;
+		    padding: 2px 16px;
+		    line-height: 20px;
+		    border-radius:30px;
+		    border:none;
+		    letter-spacing:-1px;
+		}
+		.down_btn button:hover{
+		   box-shadow:1px 1px 4px rgba(0,0,0,0.4);
+		
+		}
+		/* 로그아웃 버튼 스타일 */
+        #logoutButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
     </style>
 </head>
 <body>
+	<div id="logoutButton">
+        <a href="<c:url value='/logout.do'/>">로그아웃</a>
+        <sec:csrfInput/>
+    </div>
     <div id="border">
         <h1>게시물 상세보기</h1>
 
@@ -81,19 +106,37 @@
 	        <h1 class="post-title">${memBoard.memBoardTitle}</h1>
 	        <div class="post-meta">
 	            <span class="post-author">${memBoard.memBoardWriter}</span>
+	            <input type="hidden" name="memBoardNo" value="${memBoard.memBoardNo }"/>
 	            <fmt:formatDate value="${memBoard.regDate}" var="regDate" pattern="yyyy-MM-dd"/>
 	            <span class="post-date">${regDate}</span>
 	            <span class="post-views">${memBoard.memBoardHit}</span>
 	        </div>
 	        <div class="post-content">
 	            <p>${memBoard.memBoardContent}</p>
+	            <br><br>
+	        	<c:set value="${memBoard.memBoardFileList}" var="memBoardFile" />
+                        <c:if test="${not empty memBoardFile}">
+                            <div class="row">
+                                <c:forEach items="${memBoardFile}" var="memFile">
+                                  <c:choose>
+								        <c:when test="${not empty memFile.streFileNm}">
+								        	<%-- 이미지 미리보기 --%>
+                        					<img src="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath }/upload/${memFile.streFileNm}" alt="${memFile.orignlFileNm}" style="max-width: 70%; height: auto;">
+								        	<a href="${pageContext.request.contextPath}/board/download.do?streFileNm=${memFile.streFileNm}&orignlFileNm=${memFile.orignlFileNm}">
+								        	${memFile.orignlFileNm}</a>
+								            <%-- <img src="<c:url value='/board/showImg.do' />?fileName=${fn:escapeXml(memFile.streFileNm)}&filePath=${fn:escapeXml(memFile.fileStreCours)}" style="width: 14rem;" alt="img-blur-shadow"> --%>
+								        </c:when>
+								    </c:choose>
+						          </c:forEach>
+                            </div>
+                        </c:if>
 	        </div>
 	    </div>
 
         <!-- 댓글 목록 시작 -->
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">댓글 목록</h5>
+                <h5 class="card-title">댓글 목록 [${replyCnt }]</h5>
             </div>
             <div class="card-body" id="rpBody">
             	<c:if test="${empty replyList }">
@@ -131,19 +174,25 @@
                 <h5 class="card-title">댓글 작성</h5>
             </div>
             <div class="card-body">
-                <form action="/board/insertReply.do" method="POST">
+                <form id="replyFrm" action="/board/insertReply.do" method="POST">
                 	<sec:csrfInput />
                     <input type="hidden" name="memBoardNo" id="memBoardNo" value="${memBoard.memBoardNo }"/>
-                    <textarea name="replyContent" placeholder="내용을 입력해주세요."></textarea>
-                    <input type="submit" class="btn btn-outline-primary" value="등록" /> 
+                    <textarea id="replyContent" name="replyContent" placeholder="내용을 입력해주세요."></textarea>
+                    <input type="button" id="replyInsertBtn" class="btn btn-outline-primary" value="등록" /> 
                 </form>
             </div>
         </div>
 
+		<form id="detailFrm" action="" method="post">
+			<sec:csrfInput/>
+			<input type="hidden" name="memBoardNo" id="memBoardNo" value="${memBoard.memBoardNo }"/>
+			<input type="hidden" id="searchCondition" name="searchCondition" value="${searchCondition }"/>
+            <input type="hidden" id="searchKeyword" name="searchKeyword" value="${searchKeyword }"/>
+		</form>
         <br>
-        <button type="button" class="btn btn-outline-info" id="udtBtn" onclick="javascript:location.href='/board/memBoardModify.do?memBoardNo=${memBoard.memBoardNo }'" style="float: right;">수정</button>
-        <button type="button" class="btn btn-outline-danger" id="delBtn" onclick="javascript:location.href='/board/memBoardDelete.do?memBoardNo=${memBoard.memBoardNo}'" style="float: right;">삭제</button>
-        <button type="button" class="btn btn-outline-info" id="listBtn" onclick="javascript:location.href='/board/memBoardList.do'" style="float: right;">목록</button>
+        <button type="button" class="btn btn-outline-info" id="udtBtn" style="float: right;">수정</button>
+        <button type="button" class="btn btn-outline-danger" id="delBtn" style="float: right;">삭제</button>
+        <button type="button" class="btn btn-outline-info" id="listBtn" onclick="javascript:location.href='/board/memBoardList.do?searchCondition=${searchCondition}&searchKeyword=${searchKeyword}'" style="float: right;" style="float: right;">목록</button>
         <br><br>
     </div>
 </body>
@@ -160,8 +209,91 @@
 	var replyWriter = "${reply.replyWriter }";
 	console.log(replyWriter);
 	
+	var downBtn = $(".downBtn");
+	downBtn.on('click', function(){
+		var fileId = $(this).data("file-id");
+		console.log("fileId" + fileId);
+		location.href = "/board/download.do?fileId=" + fileId;
+	})
+	
 	
 $(function(){
+	
+	console.log("searchKeyword : " + "${searchKeyword}");
+	console.log("searchCondition : " + "${searchCondition}");
+	
+	$("#udtBtn").on("click", function(){
+		var detailFrm = $("#detailFrm");
+		$("#searchKeyword",detailFrm).val("${searchKeyword}");
+		$("#searchCondition",detailFrm).val("${searchCondition}");
+		console.log("searchKeyword : " + "${searchKeyword}");
+		console.log("searchCondition : " + "${searchCondition}");
+		detailFrm.attr("action", "/board/memBoardModify.do").submit();
+		
+	});
+	
+	var replyInsertBtn = $("#replyInsertBtn");
+	replyInsertBtn.on("click", function() {
+		console.log($("#replyContent").val());
+		if($("#replyContent").val() == null || $("#replyContent").val() == '') {
+			alert("댓글 내용 입력");
+			return false;
+		}
+		
+		replyFrm.submit();
+	});
+	
+	$('input[name="memBoardFile"]').each(function(index) {
+        $(this).change(function(){
+            setImageFromFile(this, '#preview' + (index + 1)); // 인덱스를 사용하여 고유 ID 설정
+        });
+    });
+	
+	function setImageFromFile(input, expression) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(expression).attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+	
+	// 삭제 버튼 클릭 이벤트
+    $('#delBtn').on('click', function() {
+        console.log("memBoardNo: " + memBoardNo);
+        memBoardNo = Number(memBoardNo); // 숫자로 변환
+        var confirmation = confirm("정말로 이 게시물을 삭제하시겠습니까?");
+        if (!confirmation) return;
+
+        // Ajax 요청
+        $.ajax({
+            type: 'POST',
+            url: '/board/memBoardDelete.do',
+            data: {
+                memBoardNo: memBoardNo, // 서버에 보낼 게시물 번호
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') // CSRF 토큰 설정
+            },
+            success: function(data) {
+                console.log(data.message);
+                if (data.message === "삭제 성공") {
+                    alert("게시물이 성공적으로 삭제되었습니다.");
+                    location.href = "/board/memBoardList.do"; // 삭제 성공 후 목록 페이지로 이동
+                }
+            },
+            error: function(xhr) {
+                alert('오류 발생: ' + xhr.statusText);
+            }
+        });
+    });
+	
+	var memBoardNo = "${memBoard.memBoardNo}";
+	console.log("memBoard : " + memBoardNo);
+	memBoardNo = Number(memBoardNo);
+    console.log(typeof(memBoardNo));
+	
 	var rpBody = $("#rpBody");
 	console.log(rpBody);
 	var delRplBtn = $("#delRplBtn");
@@ -298,7 +430,6 @@ $(function(){
 	    // 댓글 내용을 원래대로 되돌리기
 	    body[0].innerHTML = originalContent;
 	});
-	
 	
 })
 	

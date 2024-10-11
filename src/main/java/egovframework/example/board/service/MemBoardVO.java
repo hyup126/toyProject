@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import egovframework.example.reply.service.ReplyVO;
+
 public class MemBoardVO {
 
 	private int memBoardNo;
@@ -21,7 +23,23 @@ public class MemBoardVO {
 	private MultipartFile picture;
 	private MultipartFile[] memBoardFile;
 	private List<ComntFileDetailVO> memBoardFileList;
+	private List<ReplyVO> replyList;
+
+	private String atchFileId;
+	private Integer[] delMemBoardNo;
 	
+	public List<ReplyVO> getReplyList() {
+		return replyList;
+	}
+	public void setReplyList(List<ReplyVO> replyList) {
+		this.replyList = replyList;
+	}
+	public Integer[] getDelMemBoardNo() {
+		return delMemBoardNo;
+	}
+	public void setDelMemBoardNo(Integer[] delMemBoardNo) {
+		this.delMemBoardNo = delMemBoardNo;
+	}
 	public int getMemBoardNo() {
 		return memBoardNo;
 	}
@@ -88,20 +106,26 @@ public class MemBoardVO {
 	public void setMemBoardFileList(List<ComntFileDetailVO> memBoardFileList) {
 		this.memBoardFileList = memBoardFileList;
 	}
+	public String getAtchFileId() {
+		return atchFileId;
+	}
+	public void setAtchFileId(String atchFileId) {
+		this.atchFileId = atchFileId;
+	}
 	
-//	public void memBoardFile(MultipartFile[] memBoardFile) {
-//		this.memBoardFile = memBoardFile;
-//		if(memBoardFile != null) {
-//			List<ComntFileDetailVO> memBoardFileList = new ArrayList<ComntFileDetailVO>();
-//			for(MultipartFile item : memBoardFile) {
-//				if(StringUtils.isBlank(item.getOriginalFilename())) {
-//					continue;
-//				}
-//				ComntFileDetailVO comntFileDetailVO = new ComntFileDetailVO(item);
-//				memBoardFileList.add(comntFileDetailVO);
-//			}
-//			this.memBoardFileList = memBoardFileList;
-//		}
-//	}
+	public void memBoardFile(MultipartFile[] memBoardFile) {
+		this.memBoardFile = memBoardFile;
+		if(memBoardFile != null) {
+			List<ComntFileDetailVO> memBoardFileList = new ArrayList<ComntFileDetailVO>();
+			for(MultipartFile item : memBoardFile) {
+				if(StringUtils.isBlank(item.getOriginalFilename())) {
+					continue;
+				}
+				ComntFileDetailVO comntFileDetailVO = new ComntFileDetailVO(item);
+				memBoardFileList.add(comntFileDetailVO);
+			}
+			this.memBoardFileList = memBoardFileList;
+		}
+	}
 	
 }

@@ -80,6 +80,7 @@
         <div id="loginBoxTitle">Login</div>
         <!-- 아이디, 비번, 버튼 박스 -->
         <div id="inputBox" class="row">
+        	<sec:csrfInput/>
           <div class="input-form-box"><span>아이디</span><input type="text" name="username" class="form-control"></div><br>
           <div class="input-form-box"><span>비밀번호</span><input type="password" name="password" class="form-control"></div>
           <div class="button-login-box" >

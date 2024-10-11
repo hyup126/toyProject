@@ -13,7 +13,7 @@ public interface MemBoardMapper {
 
 	public int insertBoard(MemBoardVO memBoardVo);
 
-	public List<?> selectMemBoardList(SampleDefaultVO searchVo);
+	public List<MemBoardVO> selectMemBoardList(SampleDefaultVO searchVo);
 
 	public int selectMemBoardListTotCnt(SampleDefaultVO searchVo);
 
@@ -30,5 +30,21 @@ public interface MemBoardMapper {
 	public List<ReplyVO> selectReplyList(int memBoardNo);
 
 	public void saveFileDetails(ComntFileDetailVO comntFileDetailVo);
+
+	public void insertMemBoardFile(ComntFileDetailVO comntVo);
+
+	public ComntFileDetailVO selectMemBoardFile(String atchFileId);
+
+	public void deleteMemBoardFile(String atchFileId);
+
+	public void memBoardFileDelete(int memBoardNo);
+
+	public ComntFileDetailVO selectFileInfo(String atchFileId);
+
+	public void memReplyDelete(int memBoardNo);
+
+	public List<ComntFileDetailVO> getFilePaths(int memBoardNo);
+
+	public int selectCountReply(int memBoardNo);
 
 }

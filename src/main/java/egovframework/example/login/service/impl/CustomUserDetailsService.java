@@ -1,5 +1,9 @@
 package egovframework.example.login.service.impl;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +28,16 @@ public class CustomUserDetailsService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-	    // 사원 정보 검색(username : 로그인 시 입력받은 사번)		
-        MemberVO empVO = memberMapper.detail(username);
-        String pass = cryptoService.decrypt(empVO.getMemPass());
-        empVO.setMemPass(pass);
+		System.out.println(username);
+		
+        MemberVO memVO = memberMapper.detail(username);
+        String pass = cryptoService.decrypt(memVO.getMemPass());
+        memVO.setMemPass(pass);
 		log.info("제발 해주세요 : " + pass);
-        log.info("empVO :", empVO);
-        log.info("empVO : "+ empVO);
+        log.info("memVO :", memVO);
+        log.info("memVO : "+ memVO);
 
-        if (empVO == null) {
+        if (memVO == null) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username);
         }
 
@@ -40,7 +45,7 @@ public class CustomUserDetailsService implements UserDetailsService{
         
         
         // CustomUser로 리턴
-        return new CustomUser(empVO);
+        return new CustomUser(memVO);
     }
     
     

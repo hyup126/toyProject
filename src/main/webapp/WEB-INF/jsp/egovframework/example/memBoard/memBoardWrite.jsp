@@ -11,133 +11,82 @@
     <title>게시물 작성</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <style>
-		body {
-            background-color: #ffffff;
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Arial", sans-serif;
         }
-        /* Border 크기 조정 및 중앙 정렬 */
-        div#border {
-            width: 1250px; /* 너비를 1250px로 설정 */
-            margin: 0 auto; /* 중앙 정렬 */
+        #border {
+            max-width: 800px;
+            margin: 40px auto;
             padding: 20px;
-        }
-        /* 리스트 테이블 */
-        .listTable {
-            border-top: #1A90D8 2px solid;
-            border-bottom: #BABABA 1px solid;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        .listTable th {
-            border-bottom: #A3A3A3 1px solid;
-            padding: 2px;
-            background-color: #E4EAF8;
-            height: 20px;
-            text-align: center;
-        }
-        .listTable td {
-            border-bottom: #E0E0E0 1px solid;
-            padding: 2px;
-            background-color: #F7F7F7;
-            height: 20px;
-        }
-        /* 스타일 클래스 */
-        .listCenter {
-            font-size: 9pt;
-            color: #000000;
-            font-family: "돋움, Arial";
-            text-align: center;
-            vertical-align: middle;
-        }
-        .listRight {
-            font-size: 9pt;
-            color: #000000;
-            font-family: "돋움, Arial";
-            text-align: right;
-            vertical-align: middle;
-        }
-        
-        /* 페이징 스타일 */
-        .pagination {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .pagination a, .pagination span {
-            display: inline-block;
-            padding: 8px 16px;
-            margin: 0 2px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            color: #333;
-            text-decoration: none;
-            font-size: 14px;
-            background-color: #f9f9f9;
-        }
-        .pagination a:hover {
-            background-color: #ddd;
-        }
-        .pagination .active {
-            background-color: #1A90D8;
-            color: white;
-            border: 1px solid #1A90D8;
-        }
-        .pagination .disabled {
-            color: #ccc;
-            border: 1px solid #ccc;
-            cursor: not-allowed;
-        }
-        
-        /* 검색창 전체 스타일 */
-        #search {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #ced4da;
             border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-        /* 검색 조건 드롭다운 스타일 */
-        #search select {
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
             background-color: #ffffff;
-            cursor: pointer;
-            width: 150px; /* 드롭다운 너비 조정 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        /* 검색어 입력창 스타일 */
-        #search input[type="text"] {
-            padding: 8px;
-            font-size: 14px;
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            resize: none;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        img {
+            display: block;
+            margin: 10px auto;
+            max-width: 170px;
+            max-height: 100px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            margin-right: 10px;
-            width: 200px; /* 입력창 너비 조정 */
-            box-sizing: border-box; /* 패딩 및 보더 포함 너비 계산 */
         }
-
-        /* 검색 버튼 스타일 */
-        .btn_blue_l a {
-            display: inline-block;
-            padding: 8px 16px;
-            font-size: 14px;
+        #submitBtn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
             color: #fff;
             background-color: #1A90D8;
+            border: none;
             border-radius: 4px;
-            text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
-        /* 검색 버튼 호버 스타일 */
-        .btn_blue_l a:hover {
+        #submitBtn:hover {
             background-color: #1374c3;
         }
-
-        /* 로그아웃 버튼 스타일 */
+        #plusBtn {
+        	display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #1A90D8;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #plusBtn:hover {
+            background-color: #1374c3;
+        }
         #logoutButton {
             position: absolute;
             top: 20px;
@@ -148,42 +97,70 @@
             padding: 8px 16px;
             font-size: 14px;
             color: #fff;
-            background-color: #d9534f; /* 로그아웃 버튼 색상 */
+            background-color: #d9534f;
             border-radius: 4px;
             text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s;
         }
         #logoutButton a:hover {
-            background-color: #c9302c; /* 로그아웃 버튼 호버 색상 */
+            background-color: #c9302c;
         }
-</style>
+        .preview {
+            margin-bottom: 10px;
+        }
+        .btn_red_l {
+    display: inline-block; /* 블록으로 만들어 간격 조정 가능 */
+    padding: 10px 20px; /* 패딩 */
+    font-size: 16px; /* 글자 크기 */
+    color: #fff; /* 텍스트 색상 */
+    background-color: #dc3545; /* 빨간색 배경 */
+    border: none; /* 테두리 제거 */
+    border-radius: 4px; /* 테두리 둥글게 */
+    text-decoration: none; /* 기본 밑줄 제거 */
+    transition: background-color 0.3s; /* 효과 전환 */
+	}
+	
+	.btn_red_l:hover {
+	    background-color: #c82333; /* 호버 시 배경 색상 변화 */
+	}
+	
+	.btn_red_l:focus {
+	    outline: none; /* 포커스 시 외곽선 제거 */
+	}
+    </style>
 </head>
 <body>
     <div id="border">
         <h1>게시물 작성</h1>
-
         <form id="memBoardForm" method="post" action="/board/memBoardSave.do" enctype="multipart/form-data">
-            <sec:csrfInput />
+            <sec:csrfInput/>
+            <input type="hidden" name="memBoardNo" value="${memBoard.memBoardNo}" />
+            <input type="hidden" name="searchCondition" value="${searchCondition }"/>
+            <input type="hidden" name="searchKeyword" value="${searchKeyword }"/>
             <div class="form-group">
                 <label for="memBoardTitle">제목</label>
                 <input type="text" id="memBoardTitle" name="memBoardTitle">
             </div>
             <div class="form-group">
                 <label for="memBoardWriter">작성자</label>
-                <input type="text" id="memBoardWriter" name="memBoardWriter" value="${memVO.memId }" readonly="readonly">
+                <input type="text" id="memBoardWriter" name="memBoardWriter" value="${memVO.memId }" readonly>
             </div>
             <div class="form-group">
                 <label for="content">내용</label>
-                <textarea id="memBoardContent" name="memBoardContent" rows="20" cols="100"></textarea>
+                <textarea id="memBoardContent" name="memBoardContent"></textarea>
             </div>
-            <div class="form-group">
-                <label for="memBoardFile">파일 업로드</label>
-                <input type="file" id="memBoardFile" name="memBoardFile" multiple>
+            <div id="fileUploadContainer">
+                <div class="form-group" id="fileGroup1">
+                    <img src="" id="preview1" class="preview" alt=""/><br>
+                    <label for="memBoardFile1">파일 업로드</label>
+                    <input type="file" class="files" name="memBoardFile" id="memBoardFile1" onchange="previewImage(this)">
+                </div>
             </div>
-            <button id="submitBtn" type="button" class="btn btn-primary" style="float:right;">작성하기</button>
+            <button id="plusBtn" type="button">파일 추가</button>
+            <button id="submitBtn" type="button">작성하기</button>
+            <a href="/board/memBoardList.do?searchCondition=${searchCondition}&searchKeyword=${searchKeyword}" class="btn_red_l">취소</a>
         </form>
-
         <div id="logoutButton">
             <a href="logout.jsp">로그아웃</a>
         </div>
@@ -191,6 +168,77 @@
 
     <script>
         $(document).ready(function() {
+        	
+        	console.log("searchKeyword : " + "${searchKeyword}");
+        	console.log("searchCondition : " + "${searchCondition}");
+        	/* $('input[name="memBoardFile"]').each(function(index) {
+                $(this).change(function(){
+                    setImageFromFile(this, '#preview' + (index + 1)); // 인덱스를 사용하여 고유 ID 설정
+                });
+            });
+        	
+        	function setImageFromFile(input, expression) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $(expression).attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            } */
+        	
+        	let fileCount = 1; // 현재 파일 입력 수
+
+            // 파일 추가 버튼 클릭 이벤트
+            $("#plusBtn").click(function() {
+                if (fileCount < 5) {
+                    fileCount++;
+                    const newFileGroup = `
+                        <div class="form-group" id="fileGroup${fileCount}">
+                            <label for="memBoardFile${fileCount}">파일 업로드</label>
+                            <input type="file" class="files" name="memBoardFile" id="memBoardFile${fileCount}" onchange="previewImage(this)">
+                        </div>
+                    `;
+                    $('#fileUploadContainer').append(newFileGroup);
+
+                    // 파일 개수가 5개가 되면 버튼 숨기기
+                    if (fileCount === 5) {
+                        $('#plusBtn').hide();
+                    }
+                }
+            });
+        	
+         // 파일 미리보기 함수
+         window.previewImage = function(input) {
+               const index = input.id.replace('memBoardFile', ''); // ID에서 숫자 추출
+               const preview = document.getElementById(`preview1`);
+               if (input.files && input.files[0]) {
+                   const file = input.files[0];
+
+                   // 이미지 파일인지 체크
+                   if (!isImageFile(file)) {
+                       alert("등록된 확장자 파일만 업로드할 수 있습니다. (jpg, jpeg, gif, png, txt, pdf, hwp, xlsx)");
+                       input.value = ""; // 잘못된 파일 선택 시 input 초기화
+                       preview.src = ""; // 미리보기 초기화
+                       return; // 함수 종료
+                   }
+
+                   const reader = new FileReader();
+                   reader.onload = function(e) {
+                       preview.src = e.target.result; // 미리보기 이미지 설정
+                   }
+                   reader.readAsDataURL(file);
+               } else {
+                   preview.src = ""; // 파일이 없을 경우 미리보기 초기화
+               }
+			}
+         
+         	// 등록된 확장자 파일인지 체크
+            function isImageFile(file) {
+            	var ext = file.name.split(".").pop().toLowerCase();		// 파일명에서 확장자를 가져옵니다.
+            	return ($.inArray(ext, ["jpg", "jpeg", "gif", "png", "txt", "pdf", "hwp", "xlsx"]) === -1) ? false : true;
+            }
+        	
             $('#submitBtn').click(function() {
                 var formData = new FormData($('#memBoardForm')[0]);
                 $.ajax({

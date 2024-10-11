@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,7 +66,11 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/loginSave.do")
-	public String loginSave(MemberVO memVo) {
+	public String loginSave(MemberVO memVo, HttpServletRequest request, HttpServletResponse response) {
+		
+		if(memVo.getMemId() != null) {
+			return "/login.do";
+		}
 		
 		userService.loadUserByUsername(memVo.getUsername());
 		
@@ -94,7 +106,7 @@ public class LoginController {
 		
 		model.addAttribute("memVo", memVo);
 		
-		return "memBoard/memBoardList";
+		return "redirect:/login.do";
 		
 	}
 	
@@ -133,7 +145,6 @@ public class LoginController {
 		String message = "";
 		
 		MemberVO result = memService.idCheck(memId);
-		log.info("result : " + result);
 		log.info("memId : " + memId);
 		
 		if(result == null) {
@@ -142,14 +153,21 @@ public class LoginController {
 			message = "fail";
 		}
 		
+		log.info("result : " + result);
 		log.info("message : " + message);
 		
 		return message;
 	}
 	
-	@RequestMapping(value = "/logout")
-	public String logout() {
-		return "join/logout";
+	@RequestMapping(value = "/logout.do", method = RequestMethod.GET)
+	public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if(auth != null) {
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+		}
+		
+		return "redirect:/login.do";
 	}
 	
 }
